@@ -1,0 +1,256 @@
+﻿@using System
+@using System.Threading
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Authorization
+@using TourismFrontend.Services
+@inherits LayoutComponentBase
+@inject IJSRuntime JSRuntime
+@inject AuthenticationStateProvider AuthStateProvider
+@inject VacationPlanService PlanService
+@inject NavigationManager NavigationManager
+@implements IDisposable
+
+<div class="tourism-layout">
+    <header class="tourism-header bg-dark text-white py-3">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <a href="/" class="text-white text-decoration-none">
+                    <h1 class="h3 mb-0">Мир Путешествий</h1>
+                </a>
+                <div>
+                    <a href="/tours" class="btn btn-outline-light me-2">Туры</a>
+                    <a href="/about" class="btn btn-outline-light me-2">О нас</a>
+                    <a href="/contact" class="btn btn-outline-light me-2">Контакты</a>
+                    
+                    <a href="/vacation-plan" class="btn btn-outline-light me-2 position-relative">
+                        <i class="bi bi-calendar-check"></i> План отдыха
+                        @if (planItemsCount > 0)
+                        {
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                @planItemsCount
+                            </span>
+                        }
+                    </a>
+                    
+                    <AuthorizeView Roles="Admin">
+                        <Authorized>
+                            <div class="btn-group me-2">
+                                <button type="button" class="btn btn-warning dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Администрирование
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="/admin/tours">Управление турами</a></li>
+                                    <li><a class="dropdown-item" href="/admin/user-management">Управление пользователями</a></li>
+                                    <li><a class="dropdown-item" href="/admin/statistics">Cтатистика</a></li>
+                                </ul>
+                            </div>
+                        </Authorized>
+                    </AuthorizeView>
+                    
+                    <AuthorizeView Roles="Manager">
+                        <Authorized>
+                            <div class="btn-group me-2">
+                                <button type="button" class="btn btn-warning dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Управление
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="/admin/tours">Управление турами</a></li>
+                                    <li><a class="dropdown-item" href="/admin/statistics">Cтатистика</a></li>
+                                </ul>
+                            </div>
+                        </Authorized>
+                    </AuthorizeView>
+                    
+                    <AuthorizeView>
+                        <Authorized>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Личный кабинет
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="/profile">Мой профиль</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><button class="dropdown-item text-danger" @onclick="Logout">Выйти</button></li>
+                                </ul>
+                            </div>
+                        </Authorized>
+                        <NotAuthorized>
+                            <a href="/login" class="btn btn-primary me-2">Войти</a>
+                            <a href="/register" class="btn btn-outline-primary">Регистрация</a>
+                        </NotAuthorized>
+                    </AuthorizeView>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="tourism-main py-4">
+        <div class="container">
+            @Body
+        </div>
+    </main>
+    
+    <footer class="tourism-footer bg-dark text-white py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5>Мир Путешествий</h5>
+                    <p>Ваш надежный партнер в мире путешествий с 2010 года. Мы делаем ваш отдых незабываемым!</p>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h5>Компания</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="/about" class="text-white text-decoration-none">О нас</a></li>
+                        <li><a href="/contact" class="text-white text-decoration-none">Контакты</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5>Контакты</h5>
+                    <p><i class="bi bi-geo-alt me-2"></i> г. Москва, ул. Туристическая, д. 123</p>
+                    <p><i class="bi bi-telephone me-2"></i> +7 (495) 123-45-67</p>
+                    <p><i class="bi bi-envelope me-2"></i> info@mirputeshestviy.ru</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 text-center border-top pt-3">
+                    <p>&copy; @DateTime.Now.Year Мир Путешествий. Все права защищены.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+</div>
+
+<Toast />
+
+@code {
+    [Inject]
+    private ILogoutService LogoutService { get; set; } = null!;
+    
+    private int planItemsCount;
+    private Timer? _sessionCheckTimer;
+    private const int CHECK_INTERVAL_MS = 60000; // Проверка каждую минуту
+
+    protected override async Task OnInitializedAsync()
+    {
+        await UpdatePlanItemsCount();
+        PlanService.OnPlanChanged += async () =>
+        {
+            await UpdatePlanItemsCount();
+            await InvokeAsync(StateHasChanged);
+        };
+        _sessionCheckTimer = new Timer(CheckSession, null, 0, CHECK_INTERVAL_MS);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await UpdatePlanItemsCount();
+        }
+    }
+
+    private async Task UpdatePlanItemsCount()
+    {
+        var plan = await PlanService.GetPlanAsync();
+        planItemsCount = plan.Items.Count;
+        StateHasChanged();
+    }
+
+    private async void CheckSession(object? state)
+    {
+        try
+        {
+            var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+
+            if (user.Identity?.IsAuthenticated == true)
+            {
+                // Получаем время истечения токена из claims
+                var expirationClaim = user.FindFirst("exp");
+                if (expirationClaim != null)
+                {
+                    var expirationTime = DateTimeOffset.FromUnixTimeSeconds(long.Parse(expirationClaim.Value));
+                    if (expirationTime <= DateTimeOffset.UtcNow)
+                    {
+                        // Токен истек, выполняем разлогин
+                        var authStateProvider = (CustomAuthStateProvider)AuthStateProvider;
+                        await authStateProvider.Logout();
+                        await InvokeAsync(() => 
+                        {
+                            NavigationManager.NavigateTo("/login", true);
+                            StateHasChanged();
+                        });
+                    }
+                }
+            }
+        }
+        catch (Exception)
+        {
+            // Игнорируем ошибки при проверке сессии
+        }
+    }
+
+    public void Dispose()
+    {
+        PlanService.OnPlanChanged -= StateHasChanged;
+        _sessionCheckTimer?.Dispose();
+    }
+
+    private async Task Logout()
+    {
+        await LogoutService.Logout();
+        NavigationManager.NavigateTo("/", true);
+    }
+}
+
+<style>
+    .tourism-layout {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        width: 100%;
+    }
+    
+    .tourism-header {
+        width: 100%;
+    }
+    
+    .tourism-main {
+        flex: 1;
+        width: 100%;
+    }
+    
+    .tourism-footer {
+        width: 100%;
+    }
+    
+    .sidebar, .top-row {
+        display: none !important;
+    }
+    
+    .page {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .main {
+        flex: 1;
+        width: 100%;
+    }
+    
+    .content {
+        padding: 0;
+        width: 100%;
+    }
+
+    .badge {
+        font-size: 0.75em;
+        padding: 0.35em 0.65em;
+    }
+
+    .btn .badge {
+        margin-left: 0.25rem;
+    }
+</style>

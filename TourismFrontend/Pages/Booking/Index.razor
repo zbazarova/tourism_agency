@@ -1,0 +1,256 @@
+@page "/booking"
+@namespace TourismFrontend.Pages.Booking
+@using TourismFrontend.Services
+@using TourismFrontend.Models
+@inject VacationPlanService PlanService
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthStateProvider
+@inject IJSRuntime JSRuntime
+@inject BookingService BookingService
+@inject ToastService ToastService
+
+<PageTitle>Оформление бронирования - Мир Путешествий</PageTitle>
+
+<div class="container my-5">
+    @if (plan == null || !plan.Items.Any())
+    {
+        <div class="text-center py-5">
+            <i class="bi bi-calendar-x display-1 text-muted"></i>
+            <h3 class="mt-3">План отдыха пуст</h3>
+            <p class="text-muted">Добавьте туры в план отдыха перед бронированием</p>
+            <a href="/tours" class="btn btn-primary mt-3">Посмотреть туры</a>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-md-8">
+                <h2 class="mb-4">Оформление бронирования</h2>
+                
+                @if (isPackageBooking)
+                {
+                    <div class="alert alert-info mb-4">
+                        <h5><i class="bi bi-info-circle me-2"></i>Пакетное бронирование</h5>
+                        <p class="mb-0">Введите данные туристов - они будут использованы для всех туров в плане.</p>
+                    </div>
+
+                    <EditForm Model="@packageBookingModel" OnValidSubmit="@HandlePackageBooking">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
+
+                        <div class="mb-4">
+                            <h5>Данные туристов</h5>
+                            <div class="alert alert-info">
+                                Добавьте информацию о @maxTourists @(maxTourists == 1 ? "туристе" : "туристах")
+                            </div>
+
+                            @for (var i = 0; i < maxTourists; i++)
+                            {
+                                var touristIndex = i;
+                                if (packageBookingModel.Tourists.Count <= touristIndex)
+                                {
+                                    packageBookingModel.Tourists.Add(new TouristInfo());
+                                }
+
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <h6 class="card-subtitle mb-3 text-muted">Турист @(touristIndex + 1)</h6>
+                                        
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <label class="form-label">Имя</label>
+                                                <InputText class="form-control" @bind-Value="packageBookingModel.Tourists[touristIndex].FirstName" />
+                                                <ValidationMessage For="@(() => packageBookingModel.Tourists[touristIndex].FirstName)" />
+                                            </div>
+                                            
+                                            <div class="col-md-6">
+                                                <label class="form-label">Фамилия</label>
+                                                <InputText class="form-control" @bind-Value="packageBookingModel.Tourists[touristIndex].LastName" />
+                                                <ValidationMessage For="@(() => packageBookingModel.Tourists[touristIndex].LastName)" />
+                                            </div>
+                                            
+                                            <div class="col-md-4">
+                                                <label class="form-label">Дата рождения</label>
+                                                <InputDate class="form-control" @bind-Value="packageBookingModel.Tourists[touristIndex].BirthDate" />
+                                                <ValidationMessage For="@(() => packageBookingModel.Tourists[touristIndex].BirthDate)" />
+                                            </div>
+                                            
+                                            <div class="col-md-4">
+                                                <label class="form-label">Серия и номер паспорта</label>
+                                                <InputText class="form-control" @bind-Value="packageBookingModel.Tourists[touristIndex].Passport" 
+                                                         placeholder="0000 000000"/>
+                                                <ValidationMessage For="@(() => packageBookingModel.Tourists[touristIndex].Passport)" />
+                                            </div>
+                                            
+                                            <div class="col-md-4">
+                                                <label class="form-label">Гражданство</label>
+                                                <InputText class="form-control" @bind-Value="packageBookingModel.Tourists[touristIndex].Citizenship" />
+                                                <ValidationMessage For="@(() => packageBookingModel.Tourists[touristIndex].Citizenship)" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-outline-secondary" @onclick="CancelPackageBooking">
+                                Отмена
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                Подтвердить бронирование всех туров
+                            </button>
+                        </div>
+                    </EditForm>
+                }
+                else
+                {
+                    @foreach (var item in plan.Items)
+                    {
+                        <div class="card mb-3">
+                            <div class="row g-0">
+                                <div class="col-md-4">
+                                    <img src="@item.Tour.ImageUrl" class="img-fluid rounded-start" alt="@item.Tour.Name">
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="card-body">
+                                        <h5 class="card-title">@item.Tour.Name</h5>
+                                        <p class="card-text">@item.Tour.Description</p>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <small class="text-muted">
+                                                    <i class="bi bi-calendar"></i> 
+                                                    @item.Tour.DepartureDate.ToString("dd.MM.yyyy") - 
+                                                    @item.Tour.ReturnDate.ToString("dd.MM.yyyy")
+                                                </small>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <small class="text-muted">
+                                                    <i class="bi bi-people"></i> 
+                                                    Количество человек: @item.NumberOfPeople
+                                                </small>
+                                            </div>
+                                        </div>
+                                        <div class="mt-2">
+                                            <span class="badge bg-info">@item.RoomType.Name</span>
+                                            <span class="ms-2 fw-bold">@item.TotalPrice.ToString("N0") ₽</span>
+                                        </div>
+                                        <button class="btn btn-primary mt-3" @onclick="() => StartBooking(item.TourId)">
+                                            Оформить бронирование
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card sticky-top" style="top: 2rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">Итого</h5>
+                        <p class="display-6 mb-4">@plan.TotalPrice.ToString("N0") ₽</p>
+                        @if (!isPackageBooking)
+                        {
+                            <button class="btn btn-primary w-100" @onclick="StartPackageBooking">
+                                Забронировать все туры
+                            </button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private Models.VacationPlan? plan;
+    private bool isPackageBooking = false;
+    private BookingModel packageBookingModel = new();
+    private int maxTourists => plan?.Items.Max(i => i.NumberOfPeople) ?? 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        if (!authState.User.Identity?.IsAuthenticated ?? true)
+        {
+            NavigationManager.NavigateTo($"/login?returnUrl={Uri.EscapeDataString("/booking")}");
+            return;
+        }
+
+        plan = await PlanService.GetPlanAsync();
+    }
+
+    private void StartBooking(int tourId)
+    {
+        NavigationManager.NavigateTo($"/booking/{tourId}");
+    }
+
+    private void StartPackageBooking()
+    {
+        isPackageBooking = true;
+        packageBookingModel = new BookingModel
+        {
+            NumberOfPeople = maxTourists
+        };
+    }
+
+    private void CancelPackageBooking()
+    {
+        isPackageBooking = false;
+        packageBookingModel = new BookingModel();
+    }
+
+    private async Task HandlePackageBooking()
+    {
+        try 
+        {
+            if (plan == null || !plan.Items.Any())
+            {
+                ToastService.ShowWarning("План отдыха пуст");
+                return;
+            }
+
+            var successCount = 0;
+            var errors = new List<string>();
+
+            foreach (var item in plan.Items)
+            {
+                try
+                {
+                    var bookingModel = new BookingModel
+                    {
+                        RoomTypeId = item.RoomType.Id,
+                        NumberOfPeople = item.NumberOfPeople,
+                        Comment = "Забронировано в составе пакета туров",
+                        Tourists = packageBookingModel.Tourists.Take(item.NumberOfPeople).ToList()
+                    };
+
+                    await BookingService.CreateBookingAsync(item.TourId, bookingModel);
+                    successCount++;
+                }
+                catch (Exception ex)
+                {
+                    errors.Add($"Ошибка при бронировании тура '{item.Tour.Name}': {ex.Message}");
+                }
+            }
+
+            if (successCount > 0)
+            {
+                await PlanService.ClearPlanAsync();
+                ToastService.ShowSuccess($"Успешно забронировано туров: {successCount}");
+                NavigationManager.NavigateTo("/profile");
+            }
+
+            if (errors.Any())
+            {
+                ToastService.ShowError($"Возникли ошибки:\n{string.Join("\n", errors)}");
+            }
+        }
+        catch (Exception ex)
+        {
+            ToastService.ShowError($"Ошибка при бронировании: {ex.Message}");
+        }
+    }
+} 

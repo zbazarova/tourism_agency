@@ -1,0 +1,285 @@
+{
+  "Files": [
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/bin/Debug/net9.0/wwwroot/_framework/blazor.webassembly.js",
+      "PackagePath": "staticwebassets/_framework/blazor.webassembly.js"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/obj/Debug/net9.0/scopedcss/bundle/TourismFrontend.styles.css",
+      "PackagePath": "staticwebassets/TourismFrontend.styles.css"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/css/app.css",
+      "PackagePath": "staticwebassets/css/app.css"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/css/custom.css",
+      "PackagePath": "staticwebassets/css/custom.css"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/favicon.png",
+      "PackagePath": "staticwebassets/favicon.png"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/icon-192.png",
+      "PackagePath": "staticwebassets/icon-192.png"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/images/about-us.jpg",
+      "PackagePath": "staticwebassets/images/about-us.jpg"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/images/default-tour.jpg",
+      "PackagePath": "staticwebassets/images/default-tour.jpg"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/images/partner1.png",
+      "PackagePath": "staticwebassets/images/partner1.png"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/images/partner2.png",
+      "PackagePath": "staticwebassets/images/partner2.png"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/images/partner3.png",
+      "PackagePath": "staticwebassets/images/partner3.png"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/images/partner4.png",
+      "PackagePath": "staticwebassets/images/partner4.png"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/images/partner5.png",
+      "PackagePath": "staticwebassets/images/partner5.png"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/images/partner6.png",
+      "PackagePath": "staticwebassets/images/partner6.png"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/images/plusplane.jpg",
+      "PackagePath": "staticwebassets/images/plusplane.jpg"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/images/team1.jpg",
+      "PackagePath": "staticwebassets/images/team1.jpg"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/images/team2.jpg",
+      "PackagePath": "staticwebassets/images/team2.jpg"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/images/team3.jpg",
+      "PackagePath": "staticwebassets/images/team3.jpg"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/images/team4.jpg",
+      "PackagePath": "staticwebassets/images/team4.jpg"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/index.html",
+      "PackagePath": "staticwebassets/index.html"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/lib/bootstrap/dist/css/bootstrap-grid.css",
+      "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap-grid.css"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/lib/bootstrap/dist/css/bootstrap-grid.css.map",
+      "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap-grid.css.map"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/lib/bootstrap/dist/css/bootstrap-grid.min.css",
+      "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap-grid.min.css"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/lib/bootstrap/dist/css/bootstrap-grid.min.css.map",
+      "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap-grid.min.css.map"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/lib/bootstrap/dist/css/bootstrap-grid.rtl.css",
+      "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap-grid.rtl.css"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/lib/bootstrap/dist/css/bootstrap-grid.rtl.css.map",
+      "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap-grid.rtl.css.map"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/lib/bootstrap/dist/css/bootstrap-grid.rtl.min.css",
+      "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap-grid.rtl.min.css"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/lib/bootstrap/dist/css/bootstrap-grid.rtl.min.css.map",
+      "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap-grid.rtl.min.css.map"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/lib/bootstrap/dist/css/bootstrap-reboot.css",
+      "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap-reboot.css"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/lib/bootstrap/dist/css/bootstrap-reboot.css.map",
+      "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap-reboot.css.map"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/lib/bootstrap/dist/css/bootstrap-reboot.min.css",
+      "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap-reboot.min.css"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/lib/bootstrap/dist/css/bootstrap-reboot.min.css.map",
+      "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap-reboot.min.css.map"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/lib/bootstrap/dist/css/bootstrap-reboot.rtl.css",
+      "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap-reboot.rtl.css"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/lib/bootstrap/dist/css/bootstrap-reboot.rtl.css.map",
+      "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap-reboot.rtl.css.map"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/lib/bootstrap/dist/css/bootstrap-reboot.rtl.min.css",
+      "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap-reboot.rtl.min.css"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/lib/bootstrap/dist/css/bootstrap-reboot.rtl.min.css.map",
+      "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap-reboot.rtl.min.css.map"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/lib/bootstrap/dist/css/bootstrap-utilities.css",
+      "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap-utilities.css"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/lib/bootstrap/dist/css/bootstrap-utilities.css.map",
+      "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap-utilities.css.map"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/lib/bootstrap/dist/css/bootstrap-utilities.min.css",
+      "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap-utilities.min.css"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/lib/bootstrap/dist/css/bootstrap-utilities.min.css.map",
+      "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap-utilities.min.css.map"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/lib/bootstrap/dist/css/bootstrap-utilities.rtl.css",
+      "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap-utilities.rtl.css"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/lib/bootstrap/dist/css/bootstrap-utilities.rtl.css.map",
+      "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap-utilities.rtl.css.map"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/lib/bootstrap/dist/css/bootstrap-utilities.rtl.min.css",
+      "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap-utilities.rtl.min.css"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/lib/bootstrap/dist/css/bootstrap-utilities.rtl.min.css.map",
+      "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap-utilities.rtl.min.css.map"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/lib/bootstrap/dist/css/bootstrap.css",
+      "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap.css"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/lib/bootstrap/dist/css/bootstrap.css.map",
+      "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap.css.map"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/lib/bootstrap/dist/css/bootstrap.min.css",
+      "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap.min.css"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/lib/bootstrap/dist/css/bootstrap.min.css.map",
+      "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap.min.css.map"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/lib/bootstrap/dist/css/bootstrap.rtl.css",
+      "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap.rtl.css"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/lib/bootstrap/dist/css/bootstrap.rtl.css.map",
+      "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap.rtl.css.map"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/lib/bootstrap/dist/css/bootstrap.rtl.min.css",
+      "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap.rtl.min.css"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/lib/bootstrap/dist/css/bootstrap.rtl.min.css.map",
+      "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap.rtl.min.css.map"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/lib/bootstrap/dist/js/bootstrap.bundle.js",
+      "PackagePath": "staticwebassets/lib/bootstrap/dist/js/bootstrap.bundle.js"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/lib/bootstrap/dist/js/bootstrap.bundle.js.map",
+      "PackagePath": "staticwebassets/lib/bootstrap/dist/js/bootstrap.bundle.js.map"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/lib/bootstrap/dist/js/bootstrap.bundle.min.js",
+      "PackagePath": "staticwebassets/lib/bootstrap/dist/js/bootstrap.bundle.min.js"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/lib/bootstrap/dist/js/bootstrap.bundle.min.js.map",
+      "PackagePath": "staticwebassets/lib/bootstrap/dist/js/bootstrap.bundle.min.js.map"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/lib/bootstrap/dist/js/bootstrap.esm.js",
+      "PackagePath": "staticwebassets/lib/bootstrap/dist/js/bootstrap.esm.js"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/lib/bootstrap/dist/js/bootstrap.esm.js.map",
+      "PackagePath": "staticwebassets/lib/bootstrap/dist/js/bootstrap.esm.js.map"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/lib/bootstrap/dist/js/bootstrap.esm.min.js",
+      "PackagePath": "staticwebassets/lib/bootstrap/dist/js/bootstrap.esm.min.js"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/lib/bootstrap/dist/js/bootstrap.esm.min.js.map",
+      "PackagePath": "staticwebassets/lib/bootstrap/dist/js/bootstrap.esm.min.js.map"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/lib/bootstrap/dist/js/bootstrap.js",
+      "PackagePath": "staticwebassets/lib/bootstrap/dist/js/bootstrap.js"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/lib/bootstrap/dist/js/bootstrap.js.map",
+      "PackagePath": "staticwebassets/lib/bootstrap/dist/js/bootstrap.js.map"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/lib/bootstrap/dist/js/bootstrap.min.js",
+      "PackagePath": "staticwebassets/lib/bootstrap/dist/js/bootstrap.min.js"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/lib/bootstrap/dist/js/bootstrap.min.js.map",
+      "PackagePath": "staticwebassets/lib/bootstrap/dist/js/bootstrap.min.js.map"
+    },
+    {
+      "Id": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismFrontend/wwwroot/sample-data/weather.json",
+      "PackagePath": "staticwebassets/sample-data/weather.json"
+    },
+    {
+      "Id": "obj/Debug/net9.0/staticwebassets/msbuild.TourismFrontend.Microsoft.AspNetCore.StaticWebAssetEndpoints.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssetEndpoints.props"
+    },
+    {
+      "Id": "obj/Debug/net9.0/staticwebassets/msbuild.TourismFrontend.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj/Debug/net9.0/staticwebassets/msbuild.build.TourismFrontend.props",
+      "PackagePath": "build\\TourismFrontend.props"
+    },
+    {
+      "Id": "obj/Debug/net9.0/staticwebassets/msbuild.buildMultiTargeting.TourismFrontend.props",
+      "PackagePath": "buildMultiTargeting\\TourismFrontend.props"
+    },
+    {
+      "Id": "obj/Debug/net9.0/staticwebassets/msbuild.buildTransitive.TourismFrontend.props",
+      "PackagePath": "buildTransitive\\TourismFrontend.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

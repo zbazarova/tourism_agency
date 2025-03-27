@@ -1,0 +1,127 @@
+@page "/login"
+@using System.ComponentModel.DataAnnotations
+@using System.Text
+@using System.Text.Json
+@using TourismFrontend.Models
+@using TourismFrontend.Services
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthStateProvider
+@inject AuthService AuthService
+@inject IJSRuntime JSRuntime
+@inject ToastService ToastService
+
+<PageTitle>Вход - Мир Путешествий</PageTitle>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h3 class="card-title text-center mb-4">Вход в систему</h3>
+                    
+                    @if (!string.IsNullOrEmpty(errorMessage))
+                    {
+                        <div class="alert alert-danger">@errorMessage</div>
+                    }
+                    
+                    <EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
+                        
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <InputText id="email" @bind-Value="loginModel.Email" class="form-control" type="email" />
+                            <ValidationMessage For="@(() => loginModel.Email)" />
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Пароль</label>
+                            <InputText id="password" @bind-Value="loginModel.Password" class="form-control" type="password" />
+                            <ValidationMessage For="@(() => loginModel.Password)" />
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary" disabled="@isLoggingIn">
+                                @if (isLoggingIn)
+                                {
+                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                    <span class="ms-2">Вход...</span>
+                                }
+                                else
+                                {
+                                    <span>Войти</span>
+                                }
+                            </button>
+                        </div>
+                    </EditForm>
+                    
+                    <div class="text-center mt-3">
+                        <p>Нет аккаунта? <a href="register">Зарегистрироваться</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private LoginModel loginModel = new();
+    private bool isLoggingIn = false;
+    private string errorMessage = string.Empty;
+
+    private async Task HandleLogin()
+    {
+        isLoggingIn = true;
+        errorMessage = string.Empty;
+        
+        try
+        {
+            var result = await AuthService.LoginAsync(new UserLoginDto
+            {
+                Email = loginModel.Email,
+                Password = loginModel.Password
+            });
+
+            if (result.IsSuccess)
+            {
+                ToastService.ShowSuccess("Вход выполнен успешно");
+                NavigationManager.NavigateTo("/");
+            }
+            else
+            {
+                errorMessage = $"Ошибка входа: {result.Error}";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Ошибка входа: {ex.Message}";
+        }
+        finally
+        {
+            isLoggingIn = false;
+        }
+    }
+
+    private class LoginModel
+    {
+        [Required(ErrorMessage = "Введите email")]
+        [EmailAddress(ErrorMessage = "Некорректный формат email")]
+        public string Email { get; set; } = "";
+
+        [Required(ErrorMessage = "Введите пароль")]
+        public string Password { get; set; } = "";
+    }
+
+    public class AuthResult
+    {
+        public string Token { get; set; } = string.Empty;
+        public string RefreshToken { get; set; } = string.Empty;
+        public bool Success { get; set; }
+    }
+
+    public class ErrorResponse
+    {
+        public string Message { get; set; } = string.Empty;
+    }
+}

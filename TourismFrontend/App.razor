@@ -1,0 +1,32 @@
+﻿<CascadingAuthenticationState>
+    <Router AppAssembly="@typeof(App).Assembly">
+        <Found Context="routeData">
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(Layout.MainLayout)">
+                <NotAuthorized>
+                    <div class="container mt-5">
+                        <div class="alert alert-warning">
+                            <h4 class="alert-heading">Доступ запрещен</h4>
+                            <p>Вы не авторизованы для просмотра этой страницы.</p>
+                            <hr>
+                            <p class="mb-0">Пожалуйста, <a href="login">войдите</a> или <a href="register">зарегистрируйтесь</a>.</p>
+                        </div>
+                    </div>
+                </NotAuthorized>
+            </AuthorizeRouteView>
+            <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+        </Found>
+        <NotFound>
+            <PageTitle>Страница не найдена</PageTitle>
+            <LayoutView Layout="@typeof(Layout.MainLayout)">
+                <div class="container mt-5">
+                    <div class="alert alert-danger">
+                        <h4 class="alert-heading">Страница не найдена</h4>
+                        <p>Запрашиваемая страница не существует.</p>
+                        <hr>
+                        <p class="mb-0">Вернуться на <a href="">главную страницу</a>.</p>
+                    </div>
+                </div>
+            </LayoutView>
+        </NotFound>
+    </Router>
+</CascadingAuthenticationState>

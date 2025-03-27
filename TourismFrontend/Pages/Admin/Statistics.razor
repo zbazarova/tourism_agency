@@ -1,0 +1,73 @@
+@page "/admin/statistics"
+@using TourismFrontend.Models
+@inject StatisticsService StatisticsService
+@attribute [Authorize(Roles = "Admin,Manager")]
+
+<div class="container my-5">
+    <h2 class="mb-4">Статистика по странам</h2>
+
+    @if (statistics == null)
+    {
+        <div class="text-center">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Загрузка...</span>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var stat in statistics)
+            {
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">@stat.Country</h5>
+                            <div class="list-group list-group-flush">
+                                <div class="list-group-item d-flex justify-content-between">
+                                    <span>Всего туров:</span>
+                                    <strong>@stat.TotalTours</strong>
+                                </div>
+                                <div class="list-group-item d-flex justify-content-between">
+                                    <span>Горящих туров:</span>
+                                    <strong>@stat.HotTours</strong>
+                                </div>
+                                <div class="list-group-item d-flex justify-content-between">
+                                    <span>Средняя цена:</span>
+                                    <strong>@stat.AveragePrice.ToString("C0")</strong>
+                                </div>
+                                <div class="list-group-item d-flex justify-content-between">
+                                    <span>Бронирований:</span>
+                                    <strong>@stat.TotalBookings</strong>
+                                </div>
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>Рейтинг:</span>
+                                    <div class="text-warning">
+                                        @for (int i = 0; i < Math.Floor(stat.AverageRating); i++)
+                                        {
+                                            <i class="bi bi-star-fill"></i>
+                                        }
+                                        @if (stat.AverageRating % 1 >= 0.5)
+                                        {
+                                            <i class="bi bi-star-half"></i>
+                                        }
+                                        <span class="text-muted ms-1">(@stat.AverageRating.ToString("F1"))</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    private List<CountryStatistics>? statistics;
+
+    protected override async Task OnInitializedAsync()
+    {
+        statistics = await StatisticsService.GetCountryStatisticsAsync();
+    }
+} 

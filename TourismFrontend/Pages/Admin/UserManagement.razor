@@ -1,0 +1,367 @@
+@page "/admin/user-management"
+@using TourismFrontend.Constants
+@using TourismFrontend.Models
+@using Microsoft.AspNetCore.Authorization
+@using System.ComponentModel.DataAnnotations
+@using TourismFrontend.Services
+@attribute [Authorize(Roles = "Admin")]
+@inject HttpClient HttpClient
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+@inject UserService UserService
+@inject ToastService ToastService
+
+<h3 class="mb-4">Управление пользователями</h3>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Список пользователей</h5>
+        <button class="btn btn-primary" @onclick="() => showCreateUserModal = true">
+            <i class="bi bi-person-plus"></i> Создать пользователя
+        </button>
+    </div>
+    <div class="card-body">
+        @if (isLoading)
+        {
+            <div class="d-flex justify-content-center my-3">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Загрузка...</span>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Email</th>
+                            <th>Имя</th>
+                            <th>Фамилия</th>
+                            <th>Роль</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in users)
+                        {
+                            <tr>
+                                <td>@user.Id</td>
+                                <td>@user.Email</td>
+                                <td>@user.FirstName</td>
+                                <td>@user.LastName</td>
+                                <td>
+                                    @if (editingUserId == user.Id)
+                                    {
+                                        <select class="form-select" @bind="editingUserRole">
+                                            <option value="@UserRoles.Customer">Покупатель</option>
+                                            <option value="@UserRoles.Manager">Менеджер</option>
+                                            <option value="@UserRoles.Admin">Администратор</option>
+                                        </select>
+                                    }
+                                    else
+                                    {
+                                        <span class="@GetRoleBadgeClass(user.Role)">@GetRoleName(user.Role)</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (editingUserId == user.Id)
+                                    {
+                                        <button class="btn btn-success btn-sm me-1" @onclick="SaveUserRole">
+                                            <i class="bi bi-check"></i> Сохранить
+                                        </button>
+                                        <button class="btn btn-secondary btn-sm" @onclick="CancelEditing">
+                                            <i class="bi bi-x"></i> Отмена
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button class="btn btn-primary btn-sm me-1" @onclick="() => EditUser(user)">
+                                            <i class="bi bi-pencil"></i> Изменить роль
+                                        </button>
+                                        <button class="btn btn-danger btn-sm" @onclick="() => ConfirmDeleteUser(user.Id)">
+                                            <i class="bi bi-trash"></i> Удалить
+                                        </button>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+@if (showCreateUserModal)
+{
+    <div class="modal fade show" style="display: block;" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Создание нового пользователя</h5>
+                    <button type="button" class="btn-close" @onclick="() => showCreateUserModal = false"></button>
+                </div>
+                <div class="modal-body">
+                    <EditForm Model="newUser" OnValidSubmit="CreateUser">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
+                        
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <InputText id="email" @bind-Value="newUser.Email" class="form-control" />
+                            <ValidationMessage For="@(() => newUser.Email)" />
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="firstName" class="form-label">Имя</label>
+                            <InputText id="firstName" @bind-Value="newUser.FirstName" class="form-control" />
+                            <ValidationMessage For="@(() => newUser.FirstName)" />
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="lastName" class="form-label">Фамилия</label>
+                            <InputText id="lastName" @bind-Value="newUser.LastName" class="form-control" />
+                            <ValidationMessage For="@(() => newUser.LastName)" />
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Пароль</label>
+                            <InputText id="password" @bind-Value="newUser.Password" type="password" class="form-control" />
+                            <ValidationMessage For="@(() => newUser.Password)" />
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="role" class="form-label">Роль</label>
+                            <InputSelect id="role" @bind-Value="newUser.Role" class="form-select">
+                                <option value="@UserRoles.Customer">Покупатель</option>
+                                <option value="@UserRoles.Manager">Менеджер</option>
+                                <option value="@UserRoles.Admin">Администратор</option>
+                            </InputSelect>
+                        </div>
+                        
+                        <div class="d-flex justify-content-end">
+                            <button type="button" class="btn btn-secondary me-2" @onclick="() => showCreateUserModal = false">Отмена</button>
+                            <button type="submit" class="btn btn-primary" disabled="@isCreatingUser">
+                                @if (isCreatingUser)
+                                {
+                                    <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                                    <span>Создание...</span>
+                                }
+                                else
+                                {
+                                    <span>Создать</span>
+                                }
+                            </button>
+                        </div>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
+
+@if (showDeleteConfirmation)
+{
+    <div class="modal fade show" style="display: block;" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Подтверждение удаления</h5>
+                    <button type="button" class="btn-close" @onclick="CancelDeleteUser"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Вы уверены, что хотите удалить этого пользователя?</p>
+                    <p class="text-danger">Это действие нельзя отменить.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CancelDeleteUser">Отмена</button>
+                    <button type="button" class="btn btn-danger" @onclick="DeleteUser">
+                        @if (isDeletingUser)
+                        {
+                            <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                            <span>Удаление...</span>
+                        }
+                        else
+                        {
+                            <span>Удалить</span>
+                        }
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
+
+@code {
+    private List<UserDto> users = new();
+    private bool isLoading = true;
+    private int editingUserId = 0;
+    private string editingUserRole = string.Empty;
+    
+    private bool showCreateUserModal = false;
+    private bool isCreatingUser = false;
+    private NewUserModel newUser = new();
+    
+    private bool showDeleteConfirmation = false;
+    private bool isDeletingUser = false;
+    private int userIdToDelete = 0;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadUsers();
+    }
+    
+    private async Task LoadUsers()
+    {
+        isLoading = true;
+        try
+        {
+            var result = await UserService.GetAllUsersAsync();
+            if (result.IsSuccess)
+            {
+                users = result.Data;
+            }
+            else
+            {
+                ToastService.ShowError($"Ошибка при загрузке пользователей: {result.Error}");
+            }
+        }
+        catch (Exception ex)
+        {
+            ToastService.ShowError($"Ошибка при загрузке пользователей: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+    
+    private void EditUser(UserDto user)
+    {
+        editingUserId = user.Id;
+        editingUserRole = user.Role;
+    }
+    
+    private void CancelEditing()
+    {
+        editingUserId = 0;
+        editingUserRole = string.Empty;
+    }
+    
+    private async Task SaveUserRole()
+    {
+        try
+        {
+            var result = await UserService.UpdateUserRoleAsync(editingUserId, editingUserRole);
+            if (result.IsSuccess)
+            {
+                ToastService.ShowSuccess("Роль пользователя успешно обновлена!");
+                editingUserId = 0;
+                editingUserRole = string.Empty;
+                await LoadUsers();
+            }
+            else
+            {
+                ToastService.ShowError($"Ошибка при обновлении роли: {result.Error}");
+            }
+        }
+        catch (Exception ex)
+        {
+            ToastService.ShowError($"Ошибка при обновлении роли: {ex.Message}");
+        }
+    }
+    
+    private async Task CreateUser()
+    {
+        isCreatingUser = true;
+        try
+        {
+            var result = await UserService.CreateUserAsync(newUser);
+            if (result.IsSuccess)
+            {
+                ToastService.ShowSuccess("Пользователь успешно создан!");
+                showCreateUserModal = false;
+                newUser = new();
+                await LoadUsers();
+            }
+            else
+            {
+                ToastService.ShowError($"Ошибка при создании пользователя: {result.Error}");
+            }
+        }
+        catch (Exception ex)
+        {
+            ToastService.ShowError($"Ошибка при создании пользователя: {ex.Message}");
+        }
+        finally
+        {
+            isCreatingUser = false;
+        }
+    }
+    
+    private void ConfirmDeleteUser(int userId)
+    {
+        userIdToDelete = userId;
+        showDeleteConfirmation = true;
+    }
+    
+    private void CancelDeleteUser()
+    {
+        userIdToDelete = 0;
+        showDeleteConfirmation = false;
+    }
+    
+    private async Task DeleteUser()
+    {
+        isDeletingUser = true;
+        try
+        {
+            var result = await UserService.DeleteUserAsync(userIdToDelete);
+            if (result.IsSuccess)
+            {
+                ToastService.ShowSuccess("Пользователь успешно удален!");
+                showDeleteConfirmation = false;
+                userIdToDelete = 0;
+                await LoadUsers();
+            }
+            else
+            {
+                ToastService.ShowError($"Ошибка при удалении пользователя: {result.Error}");
+            }
+        }
+        catch (Exception ex)
+        {
+            ToastService.ShowError($"Ошибка при удалении пользователя: {ex.Message}");
+        }
+        finally
+        {
+            isDeletingUser = false;
+        }
+    }
+    
+    private string GetRoleName(string role)
+    {
+        return role switch
+        {
+            UserRoles.Admin => "Администратор",
+            UserRoles.Manager => "Менеджер",
+            UserRoles.Customer => "Покупатель",
+            _ => "Неизвестная роль"
+        };
+    }
+    
+    private string GetRoleBadgeClass(string role)
+    {
+        return role switch
+        {
+            UserRoles.Admin => "badge bg-danger",
+            UserRoles.Manager => "badge bg-warning text-dark",
+            UserRoles.Customer => "badge bg-primary",
+            _ => "badge bg-secondary"
+        };
+    }
+} 

@@ -1,0 +1,286 @@
+@page "/tours"
+@inject TourService TourService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Туры - Мир Путешествий</PageTitle>
+
+<div class="container my-5">
+    <h2 class="mb-4">Наши туры</h2>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="form-label">Поиск</label>
+                        <input type="text" class="form-control" 
+                               placeholder="Поиск по названию..." 
+                               @bind="searchQuery" 
+                               @bind:event="oninput" />
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label class="form-label">Страна</label>
+                        <select class="form-select" @bind="selectedCountry">
+                            <option value="">Все страны</option>
+                            @if (countries != null)
+                            {
+                                @foreach (var country in countries)
+                                {
+                                    <option value="@country">@country</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label class="form-label">Сортировка</label>
+                        <select class="form-select" @bind="sortBy">
+                            <option value="name">По названию</option>
+                            <option value="price_asc">По цене (возр.)</option>
+                            <option value="price_desc">По цене (убыв.)</option>
+                            <option value="rating">По рейтингу</option>
+                            <option value="duration">По длительности</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label class="form-label">Только горящие</label>
+                        <div class="form-check form-switch mt-2">
+                            <input class="form-check-input" type="checkbox" @bind="onlyHot" id="hotToursSwitch">
+                            <label class="form-check-label" for="hotToursSwitch">@(onlyHot ? "Да" : "Нет")</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Цена</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" placeholder="От" @bind="minPrice">
+                                <input type="number" class="form-control" placeholder="До" @bind="maxPrice">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Длительность (дней)</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" placeholder="От" @bind="minDuration">
+                                <input type="number" class="form-control" placeholder="До" @bind="maxDuration">
+                            </div>
+                        </div>
+                        <div class="col-md-2 d-flex align-items-end">
+                            <button class="btn btn-primary w-100" @onclick="ApplyFilters">
+                                <i class="bi bi-search me-2"></i>Найти
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (filteredTours == null)
+    {
+        <div class="text-center">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Загрузка...</span>
+            </div>
+        </div>
+    }
+    else if (!filteredTours.Any())
+    {
+        <div class="alert alert-info">По вашему запросу туры не найдены</div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var tour in GetPagedTours())
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <img src="@(string.IsNullOrEmpty(tour.ImageUrl) ? "/images/default-tour.jpg" : tour.ImageUrl)" 
+                             class="card-img-top" alt="@tour.Name" style="height: 250px; object-fit: cover;">
+                        <div class="card-body d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="card-title mb-0">@tour.Name</h5>
+                                @if (tour.IsHot)
+                                {
+                                    <span class="badge bg-danger">Горящий тур!</span>
+                                }
+                            </div>
+                            <p class="card-text flex-grow-1">@(tour.Description.Length > 100 ? tour.Description[..100] + "..." : tour.Description)</p>
+                            <div class="mt-auto">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <span class="text-primary fw-bold">@tour.Price.ToString("C0")</span>
+                                        <div class="text-warning">
+                                            @for (int i = 0; i < Math.Floor(tour.Rating); i++)
+                                            {
+                                                <i class="bi bi-star-fill"></i>
+                                            }
+                                            @if (tour.Rating % 1 >= 0.5)
+                                            {
+                                                <i class="bi bi-star-half"></i>
+                                            }
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-outline-primary" @onclick="() => ShowTourDetails(tour)">Подробнее</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        @if (TotalPages > 1)
+        {
+            <nav aria-label="Page navigation" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item @(CurrentPage == 1 ? "disabled" : "")">
+                        <button class="page-link" @onclick="() => ChangePage(CurrentPage - 1)" disabled="@(CurrentPage == 1)">
+                            <i class="bi bi-chevron-left"></i>
+                        </button>
+                    </li>
+
+                    @{
+                        const int maxVisiblePages = 5;
+                        var startPage = Math.Max(1, CurrentPage - maxVisiblePages / 2);
+                        var endPage = Math.Min(TotalPages, startPage + maxVisiblePages - 1);
+
+                        if (startPage > 1)
+                        {
+                            <li class="page-item">
+                                <button class="page-link" @onclick="() => ChangePage(1)">1</button>
+                            </li>
+                            if (startPage > 2)
+                            {
+                                <li class="page-item disabled">
+                                    <span class="page-link">...</span>
+                                </li>
+                            }
+                        }
+
+                        @for (int i = startPage; i <= endPage; i++)
+                        {
+                            var pageNumber = i;
+                            <li class="page-item @(pageNumber == CurrentPage ? "active" : "")">
+                                <button class="page-link" @onclick="() => ChangePage(pageNumber)">@pageNumber</button>
+                            </li>
+                        }
+
+                        if (endPage < TotalPages)
+                        {
+                            if (endPage < TotalPages - 1)
+                            {
+                                <li class="page-item disabled">
+                                    <span class="page-link">...</span>
+                                </li>
+                            }
+                            <li class="page-item">
+                                <button class="page-link" @onclick="() => ChangePage(TotalPages)">@TotalPages</button>
+                            </li>
+                        }
+                    }
+
+                    <li class="page-item @(CurrentPage == TotalPages ? "disabled" : "")">
+                        <button class="page-link" @onclick="() => ChangePage(CurrentPage + 1)" disabled="@(CurrentPage == TotalPages)">
+                            <i class="bi bi-chevron-right"></i>
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+        }
+    }
+</div>
+
+<style>
+    .card {
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
+    }
+</style>
+
+@code {
+    private List<Tour>? tours;
+    private List<Tour>? filteredTours;
+    private List<string>? countries;
+    
+    private string searchQuery = "";
+    private string selectedCountry = "";
+    private string sortBy = "name";
+    private bool onlyHot = false;
+    private decimal? minPrice;
+    private decimal? maxPrice;
+    private int? minDuration;
+    private int? maxDuration;
+    
+    private int CurrentPage = 1;
+    private const int PageSize = 9;
+    private int TotalPages => (int)Math.Ceiling((filteredTours?.Count ?? 0) / (double)PageSize);
+
+    protected override async Task OnInitializedAsync()
+    {
+        tours = await TourService.GetToursAsync();
+        countries = tours?.Select(t => t.Country).Distinct().OrderBy(c => c).ToList();
+        filteredTours = tours;
+        ApplyFilters();
+    }
+
+    private void ApplyFilters()
+    {
+        CurrentPage = 1;
+        filteredTours = tours?.Where(t =>
+            (string.IsNullOrEmpty(searchQuery) || t.Name.Contains(searchQuery, StringComparison.OrdinalIgnoreCase) || 
+             t.Description.Contains(searchQuery, StringComparison.OrdinalIgnoreCase)) &&
+            (string.IsNullOrEmpty(selectedCountry) || t.Country == selectedCountry) &&
+            (!onlyHot || t.IsHot) &&
+            (!minPrice.HasValue || t.Price >= minPrice) &&
+            (!maxPrice.HasValue || t.Price <= maxPrice) &&
+            (!minDuration.HasValue || t.Duration >= minDuration) &&
+            (!maxDuration.HasValue || t.Duration <= maxDuration)
+        ).ToList() ?? new List<Tour>();
+
+        filteredTours = sortBy switch
+        {
+            "name" => filteredTours.OrderBy(t => t.Name).ToList(),
+            "price_asc" => filteredTours.OrderBy(t => t.Price).ToList(),
+            "price_desc" => filteredTours.OrderByDescending(t => t.Price).ToList(),
+            "rating" => filteredTours.OrderByDescending(t => t.Rating).ToList(),
+            "duration" => filteredTours.OrderBy(t => t.Duration).ToList(),
+            _ => filteredTours
+        };
+    }
+
+    private List<Tour> GetPagedTours()
+    {
+        return filteredTours
+            .Skip((CurrentPage - 1) * PageSize)
+            .Take(PageSize)
+            .ToList();
+    }
+
+    private void ChangePage(int page)
+    {
+        if (page >= 1 && page <= TotalPages)
+        {
+            CurrentPage = page;
+        }
+    }
+
+    private void ShowTourDetails(Tour tour)
+    {
+        NavigationManager.NavigateTo($"/tours/{tour.Id}");
+    }
+}

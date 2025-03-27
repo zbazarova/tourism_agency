@@ -1,0 +1,122 @@
+@page "/user-info"
+@using TourismFrontend.Models
+@using TourismFrontend.Services
+@inject HttpClient HttpClient
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+@inject UserService UserService
+@inject ToastService ToastService
+@attribute [Authorize]
+
+<div class="container my-5">
+    <div class="card shadow">
+        <div class="card-header">
+            <h3>Информация о пользователе</h3>
+        </div>
+        <div class="card-body">
+            @if (isLoading)
+            {
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Загрузка...</span>
+                    </div>
+                </div>
+            }
+            else if (user != null)
+            {
+                <dl class="row">
+                    <dt class="col-sm-3">ID</dt>
+                    <dd class="col-sm-9">@user.Id</dd>
+
+                    <dt class="col-sm-3">Email</dt>
+                    <dd class="col-sm-9">@user.Email</dd>
+
+                    <dt class="col-sm-3">Имя</dt>
+                    <dd class="col-sm-9">@user.FirstName</dd>
+
+                    <dt class="col-sm-3">Фамилия</dt>
+                    <dd class="col-sm-9">@user.LastName</dd>
+
+                    <dt class="col-sm-3">Роль</dt>
+                    <dd class="col-sm-9">
+                        @if (user.Role == "Admin")
+                        {
+                            <span class="badge bg-danger">Администратор</span>
+                        }
+                        else if (user.Role == "Manager")
+                        {
+                            <span class="badge bg-warning">Менеджер</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-info">Покупатель</span>
+                        }
+                    </dd>
+
+                    <dt class="col-sm-3">Дата регистрации</dt>
+                    <dd class="col-sm-9">@user.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</dd>
+                </dl>
+
+                <div class="mt-4">
+                    <h4>Доступные разделы:</h4>
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <a href="/tours-page">Просмотр туров</a>
+                        </li>
+                        <li class="list-group-item">
+                            <a href="/profile">Мой профиль</a>
+                        </li>
+                        @if (user.Role == "Admin" || user.Role == "Manager")
+                        {
+                            <li class="list-group-item">
+                                <a href="/admin/tours">Управление турами</a>
+                            </li>
+                        }
+                        @if (user.Role == "Admin")
+                        {
+                            <li class="list-group-item">
+                                <a href="/admin/user-management">Управление пользователями</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-danger">
+                    Не удалось загрузить информацию о пользователе.
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private User? user;
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadUserInfo();
+    }
+
+    private async Task LoadUserInfo()
+    {
+        try
+        {
+            var result = await UserService.GetCurrentUserAsync();
+            if (result.IsSuccess)
+            {
+                user = result.Data;
+            }
+            else
+            {
+                ToastService.ShowError(result.Error ?? "Не удалось загрузить информацию о пользователе");
+            }
+        }
+        catch (Exception ex)
+        {
+            ToastService.ShowError($"Ошибка при загрузке информации о пользователе: {ex.Message}");
+        }
+    }
+} 

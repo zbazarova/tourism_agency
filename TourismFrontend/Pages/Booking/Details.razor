@@ -1,0 +1,198 @@
+@page "/booking/{TourId:int}"
+@namespace TourismFrontend.Pages.Booking
+@inject TourService TourService
+@inject BookingService BookingService
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+@inject AuthenticationStateProvider AuthStateProvider
+@inject RoomService RoomService
+@inject ToastService ToastService
+
+<PageTitle>Бронирование - Мир Путешествий</PageTitle>
+
+<div class="container my-5">
+    @if (tour == null)
+    {
+        <div class="text-center">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Загрузка...</span>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-md-8">
+                <h2 class="mb-4">Бронирование тура</h2>
+                
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">@tour.Name</h5>
+                        <p class="card-text">@tour.Description</p>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Страна:</strong> @tour.Country</p>
+                                <p><strong>Длительность:</strong> @tour.Duration дней</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Отправление:</strong> @tour.DepartureDate.ToString("dd.MM.yyyy")</p>
+                                <p><strong>Возвращение:</strong> @tour.ReturnDate.ToString("dd.MM.yyyy")</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <EditForm Model="@bookingModel" OnValidSubmit="@HandleValidSubmit">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+
+                    <div class="mb-4">
+                        <h5>Данные туристов</h5>
+                        <div class="alert alert-info">
+                            Добавьте информацию о @bookingModel.NumberOfPeople @(bookingModel.NumberOfPeople == 1 ? "туристе" : "туристах")
+                        </div>
+
+                        @for (var i = 0; i < bookingModel.NumberOfPeople; i++)
+                        {
+                            var touristIndex = i;
+                            if (bookingModel.Tourists.Count <= touristIndex)
+                            {
+                                bookingModel.Tourists.Add(new TouristInfo());
+                            }
+
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h6 class="card-subtitle mb-3 text-muted">Турист @(touristIndex + 1)</h6>
+                                    
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label">Имя</label>
+                                            <InputText class="form-control" @bind-Value="bookingModel.Tourists[touristIndex].FirstName" />
+                                            <ValidationMessage For="@(() => bookingModel.Tourists[touristIndex].FirstName)" />
+                                        </div>
+                                        
+                                        <div class="col-md-6">
+                                            <label class="form-label">Фамилия</label>
+                                            <InputText class="form-control" @bind-Value="bookingModel.Tourists[touristIndex].LastName" />
+                                            <ValidationMessage For="@(() => bookingModel.Tourists[touristIndex].LastName)" />
+                                        </div>
+                                        
+                                        <div class="col-md-4">
+                                            <label class="form-label">Дата рождения</label>
+                                            <InputDate class="form-control" @bind-Value="bookingModel.Tourists[touristIndex].BirthDate" />
+                                            <ValidationMessage For="@(() => bookingModel.Tourists[touristIndex].BirthDate)" />
+                                        </div>
+                                        
+                                        <div class="col-md-4">
+                                            <label class="form-label">Серия и номер паспорта</label>
+                                            <InputText class="form-control" @bind-Value="bookingModel.Tourists[touristIndex].Passport" 
+                                                     placeholder="0000 000000"/>
+                                            <ValidationMessage For="@(() => bookingModel.Tourists[touristIndex].Passport)" />
+                                        </div>
+                                        
+                                        <div class="col-md-4">
+                                            <label class="form-label">Гражданство</label>
+                                            <InputText class="form-control" @bind-Value="bookingModel.Tourists[touristIndex].Citizenship" />
+                                            <ValidationMessage For="@(() => bookingModel.Tourists[touristIndex].Citizenship)" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Подтвердить бронирование</button>
+                </EditForm>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card sticky-top" style="top: 2rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">Итого</h5>
+                        <div class="mb-3">
+                            @if (tour.Discount > 0)
+                            {
+                                <div>
+                                    <span class="text-decoration-line-through text-muted">@tour.Price.ToString("N0") ₽</span>
+                                    <span class="badge bg-danger ms-2">-@tour.Discount%</span>
+                                </div>
+                            }
+                            <h3 class="text-primary">@GetTotalPrice().ToString("N0") ₽</h3>
+                        </div>
+                        <dl class="row mb-0">
+                            <dt class="col-sm-8">Базовая цена:</dt>
+                            <dd class="col-sm-4 text-end">@tour.FinalPrice.ToString("N0") ₽</dd>
+
+                            <dt class="col-sm-8">Количество человек:</dt>
+                            <dd class="col-sm-4 text-end">@bookingModel.NumberOfPeople</dd>
+
+                            @if (selectedRoomType != null)
+                            {
+                                <dt class="col-sm-8">Тип номера (@selectedRoomType.Name):</dt>
+                                <dd class="col-sm-4 text-end">×@selectedRoomType.PriceMultiplier</dd>
+                            }
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public int TourId { get; set; }
+
+    private Tour? tour;
+    private List<RoomType> roomTypes = new();
+    private RoomType? selectedRoomType => roomTypes.FirstOrDefault(r => r.Id == bookingModel.RoomTypeId);
+
+    private BookingModel bookingModel = new()
+    {
+        NumberOfPeople = 1,
+        RoomTypeId = 1
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        if (!authState.User.Identity?.IsAuthenticated ?? true)
+        {
+            NavigationManager.NavigateTo($"/login?returnUrl={Uri.EscapeDataString($"/booking/{TourId}")}");
+            return;
+        }
+
+        tour = await TourService.GetTourByIdAsync(TourId);
+        if (tour == null)
+        {
+            NavigationManager.NavigateTo("/");
+            return;
+        }
+
+        roomTypes = await RoomService.GetRoomTypesAsync();
+        if (roomTypes.Any())
+        {
+            bookingModel.RoomTypeId = roomTypes.First().Id;
+        }
+    }
+
+    private decimal GetTotalPrice()
+    {
+        if (tour == null || selectedRoomType == null) return 0;
+        return tour.FinalPrice * selectedRoomType.PriceMultiplier * bookingModel.NumberOfPeople;
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        try
+        {
+            await BookingService.CreateBookingAsync(TourId, bookingModel);
+            ToastService.ShowSuccess("Бронирование успешно создано!");
+            NavigationManager.NavigateTo("/profile");
+        }
+        catch (Exception ex)
+        {
+            ToastService.ShowError($"Ошибка при бронировании: {ex.Message}");
+        }
+    }
+} 

@@ -1,0 +1,485 @@
+@page "/profile"
+@using TourismFrontend.Models
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Authorization
+@using TourismFrontend.Services
+@using TourismFrontend.Components
+@attribute [Authorize]
+@inject HttpClient HttpClient
+@inject IJSRuntime JSRuntime
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager NavigationManager
+@inject BookingService BookingService
+@inject UserService UserService
+@inject ToastService ToastService
+
+<h3 class="mb-4">Мой профиль</h3>
+
+<div class="row">
+    <div class="col-md-10 mx-auto">
+        <div class="card shadow">
+            <div class="card-body">
+                @if (isLoading)
+                {
+                    <div class="d-flex justify-content-center my-5">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Загрузка...</span>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4 class="card-title">Личная информация</h4>
+                        <button class="btn @(isEditing ? "btn-secondary" : "btn-primary")" @onclick="ToggleEditMode">
+                            @if (isEditing)
+                            {
+                                <span>Отменить</span>
+                            }
+                            else
+                            {
+                                <i class="oi oi-pencil me-2"></i>
+                                <span>Редактировать</span>
+                            }
+                        </button>
+                    </div>
+
+                    @if (isEditing)
+                    {
+                        <EditForm Model="@user" OnValidSubmit="SaveProfile">
+                            <DataAnnotationsValidator />
+                            <ValidationSummary />
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Имя</label>
+                                    <InputText @bind-Value="user.FirstName" class="form-control" />
+                                    <ValidationMessage For="@(() => user.FirstName)" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Фамилия</label>
+                                    <InputText @bind-Value="user.LastName" class="form-control" />
+                                    <ValidationMessage For="@(() => user.LastName)" />
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Email</label>
+                                <InputText @bind-Value="user.Email" class="form-control" readonly />
+                                <ValidationMessage For="@(() => user.Email)" />
+                                <small class="text-muted">Email нельзя изменить</small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Телефон</label>
+                                <PhoneInput @bind-Value="user.Phone" class="form-control" />
+                                <ValidationMessage For="@(() => user.Phone)" />
+                            </div>
+
+                            <div class="mb-4">
+                                <div class="form-check">
+                                    <InputCheckbox @bind-Value="changePassword" id="changePassword" class="form-check-input" />
+                                    <label class="form-check-label" for="changePassword">Изменить пароль</label>
+                                </div>
+                            </div>
+
+                            @if (changePassword)
+                            {
+                                <div class="mb-3">
+                                    <label class="form-label">Текущий пароль</label>
+                                    <InputText @bind-Value="currentPassword" type="password" class="form-control" />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Новый пароль</label>
+                                    <InputText @bind-Value="newPassword" type="password" class="form-control" />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Подтверждение пароля</label>
+                                    <InputText @bind-Value="confirmPassword" type="password" class="form-control" />
+                                    @if (!string.IsNullOrEmpty(passwordError))
+                                    {
+                                        <div class="text-danger mt-1">@passwordError</div>
+                                    }
+                                </div>
+                            }
+
+                            <div class="d-grid gap-2 mt-4">
+                                <button type="submit" class="btn btn-primary" disabled="@isSaving">
+                                    @if (isSaving)
+                                    {
+                                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                        <span class="ms-2">Сохранение...</span>
+                                    }
+                                    else
+                                    {
+                                        <span>Сохранить изменения</span>
+                                    }
+                                </button>
+                            </div>
+                        </EditForm>
+                    }
+                    else
+                    {
+                        <dl class="row mb-0">
+                            <div class="col-md-6 mb-3">
+                                <dt class="text-muted mb-1">Имя</dt>
+                                <dd class="h5 mb-0">@user.FirstName</dd>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <dt class="text-muted mb-1">Фамилия</dt>
+                                <dd class="h5 mb-0">@user.LastName</dd>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <dt class="text-muted mb-1">Email</dt>
+                                <dd class="h5 mb-0">@user.Email</dd>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <dt class="text-muted mb-1">Телефон</dt>
+                                <dd class="h5 mb-0">@(string.IsNullOrEmpty(user.Phone) ? "Не указан" : FormatPhoneNumber(user.Phone))</dd>
+                            </div>
+                        </dl>
+                    }
+                }
+            </div>
+        </div>
+
+        <div class="card shadow mt-4">
+            <div class="card-body">
+                <h4 class="card-title mb-4">Мои бронирования</h4>
+
+                @if (isLoadingBookings)
+                {
+                    <div class="d-flex justify-content-center my-3">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Загрузка...</span>
+                        </div>
+                    </div>
+                }
+                else if (userBookings == null || !userBookings.Any())
+                {
+                    <div class="alert alert-info">
+                        У вас пока нет бронирований. <a href="/tours">Выберите тур</a> для бронирования.
+                    </div>
+                }
+                else
+                {
+                    <div class="table-responsive" style="overflow-x: auto;">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Тур</th>
+                                    <th>Даты</th>
+                                    <th>Кол-во человек</th>
+                                    <th>Тип номера</th>
+                                    <th>Статус</th>
+                                    <th>Сумма</th>
+                                    <th>Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var booking in userBookings)
+                                {
+                                    <tr>
+                                        <td style="min-width: 150px;">@booking.TourName</td>
+                                        <td style="min-width: 180px;">@booking.StartDate.ToString("dd.MM.yyyy") - @booking.EndDate.ToString("dd.MM.yyyy")</td>
+                                        <td style="min-width: 80px; text-align: center;">@booking.NumberOfPeople чел.</td>
+                                        <td style="min-width: 120px;">@booking.RoomTypeName</td>
+                                        <td>
+                                            <span class="badge @GetStatusBadgeClass(booking.Status)">
+                                                @GetStatusDisplayName(booking.Status)
+                                            </span>
+                                        </td>
+                                        <td style="min-width: 100px; text-align: right;"><strong>@booking.TotalPrice.ToString("N0") ₽</strong></td>
+                                        <td style="min-width: 150px;">
+                                            @if (booking.Status == BookingStatus.Confirmed)
+                                            {
+                                                <button class="btn btn-outline-danger btn-sm" @onclick="() => CancelBooking(booking.Id)">
+                                                    Отменить
+                                                </button>
+                                            }
+                                            else if (booking.Status == BookingStatus.Cancelled)
+                                            {
+                                                <button class="btn btn-outline-secondary btn-sm" @onclick="() => DeleteBooking(booking.Id)">
+                                                    Удалить
+                                                </button>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (showCancelConfirmation)
+{
+    <div class="modal fade show" style="display: block;" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Подтверждение отмены</h5>
+                    <button type="button" class="btn-close" @onclick="() => showCancelConfirmation = false"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Вы уверены, что хотите отменить это бронирование?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="() => showCancelConfirmation = false">Нет</button>
+                    <button type="button" class="btn btn-danger" @onclick="ConfirmCancelBooking">
+                        @if (isCancelling)
+                        {
+                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            <span class="ms-2">Отмена...</span>
+                        }
+                        else
+                        {
+                            <span>Да, отменить</span>
+                        }
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
+
+@code {
+    private User user = new();
+    private List<BookingViewModel> userBookings = new();
+    private bool isLoading = true;
+    private bool isLoadingBookings = true;
+    private bool isEditing = false;
+    private bool isSaving = false;
+    private bool changePassword = false;
+    private string currentPassword = "";
+    private string newPassword = "";
+    private string confirmPassword = "";
+    private string passwordError = "";
+    private int bookingToCancel;
+    private bool showCancelConfirmation = false;
+    private bool isCancelling = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadUserInfo();
+        await LoadBookings();
+    }
+
+    private async Task LoadUserInfo()
+    {
+        try
+        {
+            var result = await UserService.GetCurrentUserAsync();
+            if (result.IsSuccess && result.Data != null)
+            {
+                user = result.Data;
+            }
+            else
+            {
+                ToastService.ShowError($"Ошибка при загрузке данных пользователя: {result.Error}");
+            }
+        }
+        catch (Exception ex)
+        {
+            ToastService.ShowError($"Ошибка при загрузке данных пользователя: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task LoadBookings()
+    {
+        isLoadingBookings = true;
+        try
+        {
+            var result = await BookingService.GetUserBookingsAsync();
+            var roomTypes = await BookingService.GetRoomTypesAsync();
+            
+            if (result != null)
+            {
+                userBookings = result.Select(b => new BookingViewModel
+                {
+                    Id = b.Id,
+                    TourName = b.Tour?.Name ?? "Неизвестный тур",
+                    StartDate = b.DepartureDate,
+                    EndDate = b.DepartureDate.AddDays(b.Tour?.Duration ?? 0),
+                    NumberOfPeople = b.Adults + b.Children,
+                    RoomTypeName = roomTypes.FirstOrDefault(r => r.Id == b.RoomTypeId)?.Name ?? "Стандартный",
+                    Status = Enum.Parse<BookingStatus>(b.Status),
+                    TotalPrice = b.TotalPrice
+                }).ToList();
+            }
+            else
+            {
+                ToastService.ShowError("Не удалось загрузить бронирования");
+            }
+        }
+        catch (Exception ex)
+        {
+            ToastService.ShowError($"Ошибка при загрузке бронирований: {ex.Message}");
+        }
+        finally
+        {
+            isLoadingBookings = false;
+        }
+    }
+
+    private void ToggleEditMode()
+    {
+        isEditing = !isEditing;
+        if (!isEditing)
+        {
+            changePassword = false;
+            currentPassword = "";
+            newPassword = "";
+            confirmPassword = "";
+            passwordError = "";
+        }
+    }
+
+    private async Task SaveProfile()
+    {
+        if (changePassword && newPassword != confirmPassword)
+        {
+            passwordError = "Пароли не совпадают";
+            return;
+        }
+
+        isSaving = true;
+        try
+        {
+            var result = await UserService.UpdateProfileAsync(user, 
+                changePassword ? currentPassword : null,
+                changePassword ? newPassword : null);
+
+            if (result.IsSuccess)
+            {
+                ToastService.ShowSuccess("Профиль успешно обновлен");
+                isEditing = false;
+                changePassword = false;
+                currentPassword = "";
+                newPassword = "";
+                confirmPassword = "";
+                passwordError = "";
+                await LoadUserInfo();
+            }
+            else
+            {
+                ToastService.ShowError($"Ошибка при обновлении профиля: {result.Error}");
+            }
+        }
+        catch (Exception ex)
+        {
+            ToastService.ShowError($"Ошибка при обновлении профиля: {ex.Message}");
+        }
+        finally
+        {
+            isSaving = false;
+        }
+    }
+
+    private void CancelBooking(int bookingId)
+    {
+        bookingToCancel = bookingId;
+        showCancelConfirmation = true;
+    }
+
+    private async Task ConfirmCancelBooking()
+    {
+        isCancelling = true;
+        try
+        {
+            var result = await BookingService.CancelBookingAsync(bookingToCancel);
+            if (result)
+            {
+                ToastService.ShowSuccess("Бронирование успешно отменено");
+                await LoadBookings();
+            }
+            else
+            {
+                ToastService.ShowError("Не удалось отменить бронирование");
+            }
+        }
+        catch (Exception ex)
+        {
+            ToastService.ShowError($"Ошибка при отмене бронирования: {ex.Message}");
+        }
+        finally
+        {
+            isCancelling = false;
+            showCancelConfirmation = false;
+        }
+    }
+
+    private async Task DeleteBooking(int bookingId)
+    {
+        try
+        {
+            await BookingService.DeleteBookingAsync(bookingId);
+            ToastService.ShowSuccess("Бронирование успешно удалено");
+            await LoadBookings();
+        }
+        catch (Exception ex)
+        {
+            ToastService.ShowError($"Ошибка при удалении бронирования: {ex.Message}");
+        }
+    }
+
+    private string GetStatusBadgeClass(BookingStatus status) => status switch
+    {
+        BookingStatus.Pending => "bg-warning",
+        BookingStatus.Confirmed => "bg-success",
+        BookingStatus.Cancelled => "bg-danger",
+        BookingStatus.Completed => "bg-info",
+        _ => "bg-secondary"
+    };
+
+    private string GetStatusDisplayName(BookingStatus status) => status switch
+    {
+        BookingStatus.Pending => "Ожидает подтверждения",
+        BookingStatus.Confirmed => "Подтверждено",
+        BookingStatus.Cancelled => "Отменено",
+        BookingStatus.Completed => "Завершено",
+        _ => "Неизвестно"
+    };
+
+    private string FormatPhoneNumber(string phone)
+    {
+        if (string.IsNullOrEmpty(phone)) return "";
+
+        // Убираем все нецифровые символы
+        var digitsOnly = new string(phone.Where(char.IsDigit).ToArray());
+
+        if (digitsOnly.Length == 0) return "";
+
+        // Форматируем номер телефона
+        if (digitsOnly.Length <= 1) return digitsOnly;
+        if (digitsOnly.Length <= 4) return $"+7 ({digitsOnly.Substring(1)}";
+        if (digitsOnly.Length <= 7) return $"+7 ({digitsOnly.Substring(1, 3)}) {digitsOnly.Substring(4)}";
+        if (digitsOnly.Length <= 9) return $"+7 ({digitsOnly.Substring(1, 3)}) {digitsOnly.Substring(4, 3)}-{digitsOnly.Substring(7)}";
+        return $"+7 ({digitsOnly.Substring(1, 3)}) {digitsOnly.Substring(4, 3)}-{digitsOnly.Substring(7, 2)}-{digitsOnly.Substring(9)}";
+    }
+
+    public class BookingViewModel
+    {
+        public int Id { get; set; }
+        public string TourName { get; set; } = "";
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+        public int NumberOfPeople { get; set; }
+        public string RoomTypeName { get; set; } = "";
+        public BookingStatus Status { get; set; }
+        public decimal TotalPrice { get; set; }
+    }
+} 

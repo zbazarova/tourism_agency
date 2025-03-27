@@ -1,0 +1,306 @@
+@page "/tours/{TourId:int}"
+@using TourismFrontend.Models
+@using TourismFrontend.Services
+@using System.ComponentModel.DataAnnotations
+@inject TourService TourService
+@inject RoomService RoomService
+@inject VacationPlanService VacationPlanService
+@inject NavigationManager NavigationManager
+@inject ToastService ToastService
+@inject IJSRuntime JSRuntime
+
+<PageTitle>@(tour?.Name ?? "Загрузка тура...") - Мир Путешествий</PageTitle>
+
+@if (tour == null)
+{
+    <div class="text-center my-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Загрузка...</span>
+        </div>
+    </div>
+}
+else
+{
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-md-8">
+                <img src="@(string.IsNullOrEmpty(tour.ImageUrl) ? "/images/default-tour.jpg" : tour.ImageUrl)" 
+                     class="img-fluid rounded shadow" alt="@tour.Name">
+                
+                <div class="card mt-4">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <h2 class="card-title">@tour.Name</h2>
+                            @if (tour.IsHot)
+                            {
+                                <span class="badge bg-danger">Горящий тур!</span>
+                            }
+                        </div>
+                        
+                        <div class="text-warning mb-3">
+                            @for (int i = 0; i < Math.Floor(tour.Rating); i++)
+                            {
+                                <i class="bi bi-star-fill"></i>
+                            }
+                            @if (tour.Rating % 1 >= 0.5)
+                            {
+                                <i class="bi bi-star-half"></i>
+                            }
+                            <span class="text-muted ms-2">(@tour.Rating)</span>
+                        </div>
+
+                        <p class="card-text">@tour.Description</p>
+
+                        <h4 class="mt-4">Информация об отеле</h4>
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <h5>@tour.HotelName 
+                                    @if (tour.HotelStars > 0)
+                                    {
+                                        <span class="text-warning">@(new string('⭐', tour.HotelStars))</span>
+                                    }
+                                </h5>
+                                <p>@tour.HotelDescription</p>
+                                
+                                <h6 class="mt-3">Расположение</h6>
+                                <p>@tour.Location</p>
+                                
+                                <h6 class="mt-3">Номера</h6>
+                                <p>@tour.RoomDescription</p>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h4>Что включено</h4>
+                                <ul class="list-group list-group-flush">
+                                    @foreach (var inclusion in tour.Inclusions)
+                                    {
+                                        <li class="list-group-item">
+                                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                            @inclusion
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <h4>Что не включено</h4>
+                                <ul class="list-group list-group-flush">
+                                    @foreach (var exclusion in tour.Exclusions)
+                                    {
+                                        <li class="list-group-item">
+                                            <i class="bi bi-x-circle-fill text-danger me-2"></i>
+                                            @exclusion
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(tour.TransferInfo))
+                        {
+                            <h4 class="mt-4">Информация о трансфере</h4>
+                            <p>@tour.TransferInfo</p>
+                        }
+
+                        @if (!string.IsNullOrEmpty(tour.AdditionalInfo))
+                        {
+                            <h4 class="mt-4">Дополнительная информация</h4>
+                            <p>@tour.AdditionalInfo</p>
+                        }
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card shadow-sm sticky-top" style="top: 2rem;">
+                    <div class="card-body">
+                        @if (tour.Discount > 0)
+                        {
+                            <div class="mb-2">
+                                <span class="text-decoration-line-through text-muted">@tour.Price.ToString("N0") ₽</span>
+                                <span class="badge bg-danger ms-2">-@tour.Discount%</span>
+                            </div>
+                            <h3 class="text-primary mb-3">@tour.FinalPrice.ToString("N0") ₽</h3>
+                        }
+                        else
+                        {
+                            <h3 class="text-primary mb-3">@tour.Price.ToString("N0") ₽</h3>
+                        }
+                        
+                        <dl class="row mb-0">
+                            <dt class="col-sm-6">Страна:</dt>
+                            <dd class="col-sm-6">@tour.Country</dd>
+                            
+                            <dt class="col-sm-6">Длительность:</dt>
+                            <dd class="col-sm-6">@tour.Duration дней</dd>
+                            
+                            <dt class="col-sm-6">Отправление:</dt>
+                            <dd class="col-sm-6">@tour.DepartureDate.ToString("dd.MM.yyyy")</dd>
+                            
+                            <dt class="col-sm-6">Возвращение:</dt>
+                            <dd class="col-sm-6">@tour.ReturnDate.ToString("dd.MM.yyyy")</dd>
+                            
+                            <dt class="col-sm-6">Мест осталось:</dt>
+                            <dd class="col-sm-6">@tour.AvailableSeats</dd>
+                        </dl>
+
+                        @if (!roomTypes.Any())
+                        {
+                            <div class="alert alert-warning">
+                                Загрузка типов номеров...
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <h5>Выберите тип номера</h5>
+                                    <select class="form-select mb-3" @bind="selectedRoomTypeId">
+                                        @foreach (var roomType in roomTypes)
+                                        {
+                                            <option value="@roomType.Id">
+                                                @roomType.Name (@((roomType.PriceMultiplier * tour.FinalPrice).ToString("N0") + " ₽"))
+                                            </option>
+                                        }
+                                    </select>
+
+                                    <h5>Количество человек</h5>
+                                    <input type="number" class="form-control mb-3" 
+                                           @bind="numberOfPeople" min="1" max="@tour.AvailableSeats" />
+
+                                    <button class="btn btn-primary w-100" @onclick="AddToPlan">
+                                        Добавить в план
+                                    </button>
+                                </div>
+                            </div>
+                        }
+
+                        <button class="btn btn-primary w-100 mt-3" @onclick="StartBooking">
+                            Забронировать
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<style>
+    .sticky-top {
+        z-index: 100;
+    }
+
+    .card {
+        border-radius: 8px;
+    }
+
+    .badge {
+        padding: 0.5em 1em;
+    }
+
+    .list-group-item {
+        border-left: none;
+        border-right: none;
+    }
+
+    .text-decoration-line-through {
+        text-decoration: line-through;
+    }
+    
+    .badge {
+        font-size: 0.9rem;
+        padding: 0.4em 0.6em;
+    }
+</style>
+
+@code {
+    [Parameter]
+    public int TourId { get; set; }
+
+    private Tour? tour;
+    private List<RoomType> roomTypes = new();
+    private int selectedRoomTypeId;
+    private int numberOfPeople = 1;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadTourDetails();
+        await LoadRoomTypes();
+    }
+
+    private async Task LoadTourDetails()
+    {
+        try
+        {
+            tour = await TourService.GetTourByIdAsync(TourId);
+            if (tour == null)
+            {
+                ToastService.ShowError("Тур не найден");
+                NavigationManager.NavigateTo("/tours");
+            }
+        }
+        catch (Exception ex)
+        {
+            ToastService.ShowError($"Ошибка при загрузке тура: {ex.Message}");
+            NavigationManager.NavigateTo("/tours");
+        }
+    }
+
+    private async Task LoadRoomTypes()
+    {
+        try
+        {
+            var result = await RoomService.GetRoomTypesAsync();
+            roomTypes = result;
+            if (roomTypes.Any())
+            {
+                selectedRoomTypeId = roomTypes[0].Id;
+            }
+        }
+        catch (Exception ex)
+        {
+            ToastService.ShowError($"Ошибка при загрузке типов номеров: {ex.Message}");
+        }
+    }
+
+    private async Task AddToPlan()
+    {
+        if (tour == null)
+        {
+            ToastService.ShowError("Тур не найден");
+            return;
+        }
+
+        var selectedRoom = roomTypes.FirstOrDefault(r => r.Id == selectedRoomTypeId);
+        if (selectedRoom == null)
+        {
+            ToastService.ShowError("Выбранный тип номера не найден");
+            return;
+        }
+
+        try
+        {
+            var result = await VacationPlanService.AddToVacationPlanAsync(tour, selectedRoom, numberOfPeople);
+            if (result.IsSuccess)
+            {
+                ToastService.ShowSuccess("Тур добавлен в план отдыха");
+                NavigationManager.NavigateTo("/vacation-plan");
+            }
+            else
+            {
+                ToastService.ShowError($"Ошибка при добавлении тура в план: {result.Error}");
+            }
+        }
+        catch (Exception ex)
+        {
+            ToastService.ShowError($"Ошибка при добавлении тура в план: {ex.Message}");
+        }
+    }
+
+    private void StartBooking()
+    {
+        NavigationManager.NavigateTo($"/booking/{TourId}");
+    }
+}

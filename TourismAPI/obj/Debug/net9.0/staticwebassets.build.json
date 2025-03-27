@@ -1,0 +1,331 @@
+{
+  "Version": 1,
+  "Hash": "0vmfiSsArZ/g9j8wnZajxygLRJSnYNd7vNKspr43iLs=",
+  "Source": "TourismAPI",
+  "BasePath": "_content/TourismAPI",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "TourismAPI/wwwroot",
+      "Source": "TourismAPI",
+      "ContentRoot": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismAPI/wwwroot/",
+      "BasePath": "_content/TourismAPI",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [
+    {
+      "Identity": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismAPI/wwwroot/uploads/2a450d1b-1ac6-4966-ac19-3a5175467bf6_default-tour.jpg",
+      "SourceId": "TourismAPI",
+      "SourceType": "Discovered",
+      "ContentRoot": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismAPI/wwwroot/",
+      "BasePath": "_content/TourismAPI",
+      "RelativePath": "uploads/2a450d1b-1ac6-4966-ac19-3a5175467bf6_default-tour#[.{fingerprint}]?.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "6ov5jduh8j",
+      "Integrity": "lpYPT2vSp8Z8ZGVlFPG2YsmiOHtKnj5WeGE0HDlgCuI=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/uploads/2a450d1b-1ac6-4966-ac19-3a5175467bf6_default-tour.jpg"
+    },
+    {
+      "Identity": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismAPI/wwwroot/uploads/7e356a26-1d0f-46c8-80ad-fef0ba6158b9_default-tour.jpg",
+      "SourceId": "TourismAPI",
+      "SourceType": "Discovered",
+      "ContentRoot": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismAPI/wwwroot/",
+      "BasePath": "_content/TourismAPI",
+      "RelativePath": "uploads/7e356a26-1d0f-46c8-80ad-fef0ba6158b9_default-tour#[.{fingerprint}]?.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "6ov5jduh8j",
+      "Integrity": "lpYPT2vSp8Z8ZGVlFPG2YsmiOHtKnj5WeGE0HDlgCuI=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/uploads/7e356a26-1d0f-46c8-80ad-fef0ba6158b9_default-tour.jpg"
+    },
+    {
+      "Identity": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismAPI/wwwroot/uploads/8c849b66-9040-4a6e-8f9e-a17a02ef95a3_default-tour.jpg",
+      "SourceId": "TourismAPI",
+      "SourceType": "Discovered",
+      "ContentRoot": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismAPI/wwwroot/",
+      "BasePath": "_content/TourismAPI",
+      "RelativePath": "uploads/8c849b66-9040-4a6e-8f9e-a17a02ef95a3_default-tour#[.{fingerprint}]?.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "6ov5jduh8j",
+      "Integrity": "lpYPT2vSp8Z8ZGVlFPG2YsmiOHtKnj5WeGE0HDlgCuI=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/uploads/8c849b66-9040-4a6e-8f9e-a17a02ef95a3_default-tour.jpg"
+    }
+  ],
+  "Endpoints": [
+    {
+      "Route": "uploads/2a450d1b-1ac6-4966-ac19-3a5175467bf6_default-tour.6ov5jduh8j.jpg",
+      "AssetFile": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismAPI/wwwroot/uploads/2a450d1b-1ac6-4966-ac19-3a5175467bf6_default-tour.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "279443"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"lpYPT2vSp8Z8ZGVlFPG2YsmiOHtKnj5WeGE0HDlgCuI=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 13 Mar 2025 19:31:47 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "6ov5jduh8j"
+        },
+        {
+          "Name": "label",
+          "Value": "uploads/2a450d1b-1ac6-4966-ac19-3a5175467bf6_default-tour.jpg"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-lpYPT2vSp8Z8ZGVlFPG2YsmiOHtKnj5WeGE0HDlgCuI="
+        }
+      ]
+    },
+    {
+      "Route": "uploads/2a450d1b-1ac6-4966-ac19-3a5175467bf6_default-tour.jpg",
+      "AssetFile": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismAPI/wwwroot/uploads/2a450d1b-1ac6-4966-ac19-3a5175467bf6_default-tour.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "279443"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"lpYPT2vSp8Z8ZGVlFPG2YsmiOHtKnj5WeGE0HDlgCuI=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 13 Mar 2025 19:31:47 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-lpYPT2vSp8Z8ZGVlFPG2YsmiOHtKnj5WeGE0HDlgCuI="
+        }
+      ]
+    },
+    {
+      "Route": "uploads/7e356a26-1d0f-46c8-80ad-fef0ba6158b9_default-tour.6ov5jduh8j.jpg",
+      "AssetFile": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismAPI/wwwroot/uploads/7e356a26-1d0f-46c8-80ad-fef0ba6158b9_default-tour.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "279443"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"lpYPT2vSp8Z8ZGVlFPG2YsmiOHtKnj5WeGE0HDlgCuI=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 13 Mar 2025 19:35:40 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "6ov5jduh8j"
+        },
+        {
+          "Name": "label",
+          "Value": "uploads/7e356a26-1d0f-46c8-80ad-fef0ba6158b9_default-tour.jpg"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-lpYPT2vSp8Z8ZGVlFPG2YsmiOHtKnj5WeGE0HDlgCuI="
+        }
+      ]
+    },
+    {
+      "Route": "uploads/7e356a26-1d0f-46c8-80ad-fef0ba6158b9_default-tour.jpg",
+      "AssetFile": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismAPI/wwwroot/uploads/7e356a26-1d0f-46c8-80ad-fef0ba6158b9_default-tour.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "279443"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"lpYPT2vSp8Z8ZGVlFPG2YsmiOHtKnj5WeGE0HDlgCuI=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 13 Mar 2025 19:35:40 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-lpYPT2vSp8Z8ZGVlFPG2YsmiOHtKnj5WeGE0HDlgCuI="
+        }
+      ]
+    },
+    {
+      "Route": "uploads/8c849b66-9040-4a6e-8f9e-a17a02ef95a3_default-tour.6ov5jduh8j.jpg",
+      "AssetFile": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismAPI/wwwroot/uploads/8c849b66-9040-4a6e-8f9e-a17a02ef95a3_default-tour.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "279443"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"lpYPT2vSp8Z8ZGVlFPG2YsmiOHtKnj5WeGE0HDlgCuI=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 13 Mar 2025 19:32:21 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "6ov5jduh8j"
+        },
+        {
+          "Name": "label",
+          "Value": "uploads/8c849b66-9040-4a6e-8f9e-a17a02ef95a3_default-tour.jpg"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-lpYPT2vSp8Z8ZGVlFPG2YsmiOHtKnj5WeGE0HDlgCuI="
+        }
+      ]
+    },
+    {
+      "Route": "uploads/8c849b66-9040-4a6e-8f9e-a17a02ef95a3_default-tour.jpg",
+      "AssetFile": "/Users/paveld/Desktop/Учеба/Лабы 2024/саСи Шарп/КП/Tourism Agency/TourismAPI/wwwroot/uploads/8c849b66-9040-4a6e-8f9e-a17a02ef95a3_default-tour.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "279443"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"lpYPT2vSp8Z8ZGVlFPG2YsmiOHtKnj5WeGE0HDlgCuI=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 13 Mar 2025 19:32:21 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-lpYPT2vSp8Z8ZGVlFPG2YsmiOHtKnj5WeGE0HDlgCuI="
+        }
+      ]
+    }
+  ]
+}

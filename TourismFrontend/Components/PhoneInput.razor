@@ -1,0 +1,68 @@
+@using Microsoft.AspNetCore.Components.Forms
+
+<div class="@CssClass">
+    <input type="tel" 
+           class="form-control @(CssClass ?? "")" 
+           value="@FormatPhoneNumber(Value)"
+           @oninput="OnInputChanged"
+           placeholder="+7 (___) ___-__-__"
+           @attributes="AdditionalAttributes" />
+</div>
+
+@code {
+    [Parameter]
+    public string Value { get; set; } = "";
+
+    [Parameter]
+    public EventCallback<string> ValueChanged { get; set; }
+
+    [Parameter]
+    public string? CssClass { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string FormatPhoneNumber(string phone)
+    {
+        if (string.IsNullOrEmpty(phone)) return "";
+
+        // Убираем все нецифровые символы
+        var digitsOnly = new string(phone.Where(char.IsDigit).ToArray());
+
+        if (digitsOnly.Length == 0) return "";
+
+        // Форматируем номер телефона
+        if (digitsOnly.Length <= 1) return digitsOnly;
+        if (digitsOnly.Length <= 4) return $"+7 ({digitsOnly.Substring(1)}";
+        if (digitsOnly.Length <= 7) return $"+7 ({digitsOnly.Substring(1, 3)}) {digitsOnly.Substring(4)}";
+        if (digitsOnly.Length <= 9) return $"+7 ({digitsOnly.Substring(1, 3)}) {digitsOnly.Substring(4, 3)}-{digitsOnly.Substring(7)}";
+        return $"+7 ({digitsOnly.Substring(1, 3)}) {digitsOnly.Substring(4, 3)}-{digitsOnly.Substring(7, 2)}-{digitsOnly.Substring(9)}";
+    }
+
+    private async Task OnInputChanged(ChangeEventArgs e)
+    {
+        var newValue = e.Value?.ToString() ?? "";
+        
+        // Оставляем только цифры
+        var digitsOnly = new string(newValue.Where(char.IsDigit).ToArray());
+        
+        // Если первая цифра не 7, добавляем её
+        if (digitsOnly.Length > 0 && digitsOnly[0] != '7')
+        {
+            digitsOnly = "7" + digitsOnly;
+        }
+        
+        // Ограничиваем длину до 11 цифр
+        if (digitsOnly.Length > 11)
+        {
+            digitsOnly = digitsOnly.Substring(0, 11);
+        }
+        
+        // Обновляем значение
+        if (digitsOnly != Value)
+        {
+            Value = digitsOnly;
+            await ValueChanged.InvokeAsync(digitsOnly);
+        }
+    }
+} 
